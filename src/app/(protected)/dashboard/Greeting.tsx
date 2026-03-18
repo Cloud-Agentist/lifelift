@@ -25,7 +25,7 @@ export default function Greeting({ userName, pendingApprovals, totalEvents, tota
     return (
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-white">
-          Welcome to LifeLift, {firstName}!
+          Welcome to Cloud Agentist, {firstName}!
         </h1>
         <p className="text-slate-400 mt-1">
           Your AI is ready to help. Here are some things to try:

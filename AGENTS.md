@@ -1,12 +1,12 @@
-# LifeLift — Agent Guide
+# Cloud Agentist — Agent Guide
 
 ## What This Repo Is
 
-LifeLift is the **flagship consumer-facing UI shell** for the Cloud Agentist platform.
+Cloud Agentist is the **flagship consumer-facing UI shell** for the Cloud Agentist platform.
 It is a Next.js 16 application that lets humans interact with their persistent AI actor,
 review pending approvals, and see their activity and memory.
 
-LifeLift **does not contain platform logic**. It calls platform APIs only. All reasoning,
+Cloud Agentist **does not contain platform logic**. It calls platform APIs only. All reasoning,
 governance, memory, and capability execution live in `cloud-agentist-platform`.
 
 ## Architecture Role
@@ -14,14 +14,14 @@ governance, memory, and capability execution live in `cloud-agentist-platform`.
 ```
 Human (browser)
      ↕
-LifeLift (Next.js, port 3100)
+Cloud Agentist (Next.js, port 3100)
      ↕  server-side only — never browser-to-platform
 Cloud Agentist Platform services (ports 3000-3021)
 ```
 
 ## Key Rules
 
-1. **No platform logic in LifeLift** — No authority evaluation, no approval storage, no actor
+1. **No platform logic in Cloud Agentist** — No authority evaluation, no approval storage, no actor
    management beyond `ensureActor()`. Call the platform; don't re-implement it.
 
 2. **Server-side calls only** — Internal platform URLs (`localhost:3002`, etc.) must never reach

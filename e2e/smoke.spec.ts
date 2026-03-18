@@ -1,12 +1,12 @@
 import { test, expect } from "@playwright/test";
 
-test.describe("LifeLift Smoke Tests", () => {
+test.describe("Cloud Agentist Smoke Tests", () => {
 
   test("landing page renders correctly", async ({ page }) => {
     await page.goto("/");
 
     // Title
-    await expect(page.locator("h1")).toContainText("LifeLift");
+    await expect(page.locator("h1")).toContainText("Cloud Agentist");
 
     // Tagline
     await expect(page.locator("text=Your AI that acts")).toBeVisible();

@@ -40,7 +40,7 @@ export default function Nav({ userName, userPicture }: NavProps) {
 
   // Update browser tab title
   useEffect(() => {
-    document.title = badgeCount > 0 ? `(${badgeCount}) LifeLift` : "LifeLift";
+    document.title = badgeCount > 0 ? `(${badgeCount}) Cloud Agentist` : "Cloud Agentist";
   }, [badgeCount]);
 
   const navItems = (
@@ -74,7 +74,7 @@ export default function Nav({ userName, userPicture }: NavProps) {
             href="/dashboard"
             className="text-lg font-bold text-indigo-400 hover:text-indigo-300 mr-2 sm:mr-4 transition-colors"
           >
-            LifeLift
+            Cloud Agentist
           </Link>
           {/* Desktop nav items */}
           <div className="hidden sm:flex items-center gap-1">

@@ -4,7 +4,7 @@ export default function TermsPage() {
       <div className="max-w-2xl mx-auto">
         <h1 className="text-3xl font-bold text-white mb-6">Terms of Service</h1>
         <p className="text-slate-300 leading-relaxed">
-          These terms govern your use of LifeLift. Full terms coming soon.
+          These terms govern your use of Cloud Agentist. Full terms coming soon.
         </p>
       </div>
     </main>

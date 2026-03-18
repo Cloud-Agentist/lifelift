@@ -200,7 +200,7 @@ export default function ChatShell({ actorId, userName, initialHistory = [] }: Ch
     role: "assistant",
     content: initialHistory.length > 0
       ? `Welcome back, ${userName.split(" ")[0]}! Here's your recent conversation. How can I help?`
-      : `Hi ${userName.split(" ")[0]}! I'm your LifeLift assistant. I can help you manage your calendar, wishlists, and more. Try one of the suggestions below, or just ask me anything.`,
+      : `Hi ${userName.split(" ")[0]}! I'm your Cloud Agentist assistant. I can help you manage your calendar, wishlists, and more. Try one of the suggestions below, or just ask me anything.`,
     timestamp: new Date().toISOString(),
   };
 

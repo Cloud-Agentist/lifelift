@@ -17,10 +17,10 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "LifeLift — Your AI that acts",
+  title: "Cloud Agentist — Your AI that acts",
   description: "Manage your schedule, wishlists, and finances through conversation.",
   openGraph: {
-    title: "LifeLift — Your AI that acts",
+    title: "Cloud Agentist — Your AI that acts",
     description: "Manage your schedule, wishlists, and finances through conversation.",
     type: "website",
   },

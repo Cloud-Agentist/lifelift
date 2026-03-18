@@ -1,9 +1,9 @@
-# LifeLift — Next.js 16 Docker image
+# Cloud Agentist — Next.js 16 Docker image
 #
 # Uses Next.js standalone output for minimal runtime footprint.
 # Build from the lifelift/ directory:
 #
-#   docker build -t lifelift .
+#   docker build -t cloud-agentist-app .
 #
 # Run:
 #   docker run -p 3100:3100 \
@@ -12,7 +12,7 @@
 #     -e AUTH0_CLIENT_SECRET=... \
 #     -e AUTH0_SECRET=... \
 #     -e COGNITION_GATEWAY_URL=http://gateway:3000 \
-#     lifelift
+#     cloud-agentist-app
 
 # ── Stage 1: deps ─────────────────────────────────────────────────────────────
 FROM node:22-alpine AS deps

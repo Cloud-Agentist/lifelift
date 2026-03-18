@@ -1,6 +1,6 @@
 # Authenticated Pages — 7-Persona Review
 
-**Generated:** 2026-03-18T18:11:42.287Z
+**Generated:** 2026-03-18T20:31:55.161Z
 
 ## Summary: 12 findings
 Critical: 0 | High: 0 | Medium: 7 | Low: 5

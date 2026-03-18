@@ -20,7 +20,7 @@ function addFinding(page: string, persona: string, severity: Finding["severity"]
   findings.push({ page, persona, severity, finding });
 }
 
-test.describe("7-Persona LifeLift Review", () => {
+test.describe("7-Persona Cloud Agentist Review", () => {
   test.setTimeout(60000);
   // ─── Landing Page (public) ───────────────────────────────────
   test("Landing Page review", async ({ page }) => {
@@ -72,7 +72,7 @@ test.describe("7-Persona LifeLift Review", () => {
     }
 
     // ── Product Owner Persona ──
-    if (!textLower.includes("lifelift")) {
+    if (!textLower.includes("cloud agentist")) {
       addFinding("/", "PO", "high", "Hero heading does not contain product name");
     }
     if (!htmlLower.includes('href="/auth/login') && !htmlLower.includes("href=\"/signup")) {
@@ -482,7 +482,7 @@ test.describe("7-Persona LifeLift Review", () => {
     );
 
     // Write markdown report
-    let md = `# 7-Persona LifeLift Review Report\n\n`;
+    let md = `# 7-Persona Cloud Agentist Review Report\n\n`;
     md += `**Generated:** ${report.timestamp}\n\n`;
     md += `## Summary\n\n`;
     md += `| Severity | Count |\n|----------|-------|\n`;

@@ -8,7 +8,7 @@ export default function HomePage() {
       <div className="max-w-2xl w-full text-center space-y-10">
         <div>
           <h1 className="text-5xl font-bold tracking-tight bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
-            LifeLift
+            Cloud Agentist
           </h1>
           <p className="mt-4 text-xl text-slate-300 max-w-lg mx-auto">
             Your AI that acts — but only with your approval.
