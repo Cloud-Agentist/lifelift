@@ -66,7 +66,7 @@ export default function Nav({ userName, userPicture }: NavProps) {
   );
 
   return (
-    <nav className="border-b border-slate-800 px-4 sm:px-6 py-3">
+    <nav className="border-b border-slate-800 px-4 sm:px-6 py-3 overflow-hidden">
       <div className="flex items-center justify-between">
         {/* Left: Logo + desktop nav */}
         <div className="flex items-center gap-1">

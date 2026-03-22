@@ -214,7 +214,7 @@ export default function ChatShell({ actorId, userName, initialHistory = [] }: Ch
   ]);
   const [input, setInput] = useState("");
   const [sessionId, setSessionId] = useState<string | undefined>(undefined);
-  const [showSuggestions, setShowSuggestions] = useState(initialHistory.length === 0);
+  const [showSuggestions, setShowSuggestions] = useState(true);
   const [isPending, startTransition] = useTransition();
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
