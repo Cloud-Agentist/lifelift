@@ -2,6 +2,20 @@
 
 import { interact, decideApproval, listEvents } from "@/lib/platform";
 
+// Simple in-memory rate limiter: max 8 messages per 30 seconds per actor
+const rateLimitMap = new Map<string, number[]>();
+const RATE_LIMIT_WINDOW = 30_000;
+const RATE_LIMIT_MAX = 8;
+
+function checkRateLimit(actorId: string): boolean {
+  const now = Date.now();
+  const timestamps = (rateLimitMap.get(actorId) ?? []).filter((t) => now - t < RATE_LIMIT_WINDOW);
+  if (timestamps.length >= RATE_LIMIT_MAX) return false;
+  timestamps.push(now);
+  rateLimitMap.set(actorId, timestamps);
+  return true;
+}
+
 interface SendMessageArgs {
   actorId: string;
   input: string;
@@ -30,6 +44,9 @@ export interface SendMessageResult {
  * Send a message through the full governed actor interaction flow.
  */
 export async function sendMessage(args: SendMessageArgs): Promise<SendMessageResult> {
+  if (!checkRateLimit(args.actorId)) {
+    return { text: "You're sending messages too quickly. Please wait a moment and try again." };
+  }
   try {
     const result = await interact(args.actorId, args.input, args.sessionId);
     return {
@@ -58,7 +75,7 @@ export async function loadChatHistory(
   try {
     const events = await listEvents(actorId, limit);
     const interactions = events
-      .filter((e) => e.event_type === "interaction")
+      .filter((e) => (e.event_type ?? e.eventType) === "interaction")
       .reverse(); // oldest first
 
     const messages: Array<{ role: "user" | "assistant"; content: string; timestamp: string }> = [];
@@ -66,12 +83,13 @@ export async function loadChatHistory(
       const payload = event.payload as Record<string, unknown>;
       const input = payload.input as string | undefined;
       const output = payload.output as Record<string, unknown> | undefined;
+      const ts = event.created_at ?? event.occurredAt ?? "";
 
       if (input) {
-        messages.push({ role: "user", content: input, timestamp: event.created_at });
+        messages.push({ role: "user", content: input, timestamp: ts });
       }
       if (output?.text) {
-        messages.push({ role: "assistant", content: output.text as string, timestamp: event.created_at });
+        messages.push({ role: "assistant", content: output.text as string, timestamp: ts });
       }
     }
     return messages;

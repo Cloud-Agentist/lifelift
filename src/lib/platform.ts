@@ -141,11 +141,16 @@ export async function listMemories(actorId: string, limit = 20): Promise<Memory[
 // ── Event store ───────────────────────────────────────────────────────────────
 
 export interface ActorEvent {
-  event_id: string;
-  actor_id: string;
-  event_type: string;
+  // API returns camelCase; support both for safety
+  event_id?: string;
+  eventId?: string;
+  actor_id?: string;
+  actorId?: string;
+  event_type?: string;
+  eventType?: string;
   payload: Record<string, unknown>;
-  created_at: string;
+  created_at?: string;
+  occurredAt?: string;
 }
 
 export async function listEvents(actorId: string, limit = 30): Promise<ActorEvent[]> {

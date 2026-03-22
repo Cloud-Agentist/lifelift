@@ -33,12 +33,12 @@ export default async function DashboardPage() {
 
   const goalCount = memories.filter((m) => m.memory_type === "goal").length;
   const factCount = memories.filter((m) => m.memory_type === "fact").length;
-  const interactionCount = events.filter((e) => e.event_type === "interaction").length;
+  const interactionCount = events.filter((e) => (e.event_type ?? e.eventType) === "interaction").length;
 
   const userName = (session.user.name ?? session.user.nickname ?? session.user.email ?? "User") as string;
 
   return (
-    <div className="max-w-5xl mx-auto px-6 py-8">
+    <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8 overflow-x-hidden">
       <Greeting
         userName={userName}
         pendingApprovals={approvals.length}
@@ -98,7 +98,7 @@ export default async function DashboardPage() {
             />
           ) : (
             <div>
-              <div className="grid grid-cols-3 gap-3 mb-4">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-4">
                 <FinanceStat label="Income" value={spending.totalIncome} color="emerald" currency={accounts[0]?.currency} />
                 <FinanceStat label="Expenses" value={spending.totalExpenses} color="red" currency={accounts[0]?.currency} />
                 <FinanceStat label="Net" value={spending.netCashFlow} color={spending.netCashFlow >= 0 ? "emerald" : "red"} currency={accounts[0]?.currency} />
@@ -132,12 +132,12 @@ export default async function DashboardPage() {
           ) : (
             <div className="space-y-1.5 max-h-48 overflow-y-auto">
               {events.slice(0, 8).map((e) => (
-                <div key={e.event_id} className="flex items-center gap-3 text-sm py-1">
-                  <span className="text-xs text-slate-600 w-24 shrink-0 text-right">
-                    {relativeTime(e.created_at)}
+                <div key={e.event_id ?? e.eventId} className="flex items-center gap-3 text-sm py-1">
+                  <span className="text-xs text-slate-600 hidden sm:inline w-24 shrink-0 text-right">
+                    {relativeTime(e.created_at ?? e.occurredAt ?? "")}
                   </span>
                   <span className="text-xs bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-mono">
-                    {e.event_type}
+                    {e.event_type ?? e.eventType}
                   </span>
                   {typeof e.payload?.input === "string" && (
                     <span className="text-xs text-slate-500 truncate">
