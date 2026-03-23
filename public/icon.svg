@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <defs>
+    <linearGradient id="g" x1="0.2" y1="0" x2="0.8" y2="1">
+      <stop offset="0%" stop-color="#6366f1"/>
+      <stop offset="100%" stop-color="#a78bfa"/>
+    </linearGradient>
+  </defs>
+  <!-- Cloud -->
+  <path d="
+    M 384 352
+    L 144 352
+    C 96 352, 56 312, 56 264
+    C 56 224, 80 192, 116 180
+    C 112 132, 148 96, 196 96
+    C 232 96, 264 120, 276 152
+    C 292 136, 316 128, 340 128
+    C 400 128, 448 176, 448 232
+    C 448 244, 444 256, 440 264
+    C 456 280, 464 300, 464 320
+    C 464 340, 440 352, 384 352
+    Z"
+    fill="url(#g)"/>
+  <!--
+    G10: Two simple eyes on the cloud itself. No bolt.
+    The cloud IS the agent — it's looking at you, aware, present.
+    Minimal: just two dark ovals. Friendly but not cartoonish.
+  -->
+  <ellipse cx="200" cy="232" rx="24" ry="28" fill="#020617"/>
+  <ellipse cx="312" cy="232" rx="24" ry="28" fill="#020617"/>
+  <!-- Subtle highlights — alive, attentive -->
+  <circle cx="208" cy="224" r="8" fill="#e0e7ff"/>
+  <circle cx="320" cy="224" r="8" fill="#e0e7ff"/>
+</svg>

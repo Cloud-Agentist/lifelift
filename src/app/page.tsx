@@ -7,6 +7,7 @@ export default function HomePage() {
       <div className="flex-1 flex flex-col items-center justify-center p-8">
       <div className="max-w-2xl w-full text-center space-y-10">
         <div>
+          <img src="/icon.svg" alt="" className="h-20 w-auto mx-auto mb-6" />
           <h1 className="text-5xl font-bold tracking-tight bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
             Cloud Agentist
           </h1>

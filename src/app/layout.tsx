@@ -19,10 +19,18 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Cloud Agentist — Your AI that acts",
   description: "Manage your schedule, wishlists, and finances through conversation.",
+  icons: {
+    icon: [
+      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/favicon.png", type: "image/png", sizes: "32x32" },
+    ],
+    apple: { url: "/brand/logomark-256.png", sizes: "256x256" },
+  },
   openGraph: {
     title: "Cloud Agentist — Your AI that acts",
     description: "Manage your schedule, wishlists, and finances through conversation.",
     type: "website",
+    images: [{ url: "/brand/og-image.png", width: 1200, height: 630 }],
   },
 };
 
