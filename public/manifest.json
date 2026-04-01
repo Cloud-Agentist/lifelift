@@ -1,0 +1,14 @@
+{
+  "name": "Cloud Agentist",
+  "short_name": "Agentist",
+  "description": "Your AI that acts — manage your schedule, wishlists, and finances through conversation.",
+  "start_url": "/dashboard",
+  "display": "standalone",
+  "background_color": "#020617",
+  "theme_color": "#6366f1",
+  "icons": [
+    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml" },
+    { "src": "/favicon.png", "sizes": "32x32", "type": "image/png" },
+    { "src": "/brand/logomark-256.png", "sizes": "256x256", "type": "image/png" }
+  ]
+}

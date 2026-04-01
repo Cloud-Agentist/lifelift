@@ -4,6 +4,7 @@ import { ensureActor } from "@/lib/platform";
 import Link from "next/link";
 import DataDeleteItem from "./DataDeleteItem";
 import GoogleCalendarConnect from "./GoogleCalendarConnect";
+import NotificationToggle from "@/components/NotificationToggle";
 
 const AGENDAMERGE_URL = process.env.AGENDAMERGE_URL || "http://localhost:8083";
 
@@ -113,6 +114,7 @@ export default async function SettingsPage() {
       {/* Integrations */}
       <section className="bg-slate-900 border border-slate-800 rounded-xl p-6 mb-6">
         <h2 className="text-sm font-semibold uppercase tracking-wider text-slate-500 mb-4">Integrations</h2>
+        <NotificationToggle />
         <GoogleCalendarConnect actorId={actor.actor_id} agendamergeUrl={AGENDAMERGE_URL} />
       </section>
 

@@ -25,12 +25,26 @@ export default function Nav({ userName, userPicture }: NavProps) {
   useEffect(() => {
     if (!userName) return;
     let cancelled = false;
+    let prevCount = 0;
     async function poll() {
       try {
         const res = await fetch("/api/approvals", { cache: "no-store" });
         if (!res.ok || cancelled) return;
         const data = (await res.json()) as { count?: number };
-        if (!cancelled) setBadgeCount(data.count ?? 0);
+        const newCount = data.count ?? 0;
+        if (!cancelled) {
+          // Notify if count increased (new approvals)
+          if (newCount > prevCount && prevCount >= 0 && Notification.permission === "granted") {
+            const diff = newCount - prevCount;
+            new Notification("Cloud Agentist", {
+              body: `${diff} new approval${diff > 1 ? "s" : ""} waiting for your decision`,
+              icon: "/brand/logomark-256.png",
+              tag: "approvals",
+            });
+          }
+          prevCount = newCount;
+          setBadgeCount(newCount);
+        }
       } catch { /* ignore */ }
     }
     void poll();
