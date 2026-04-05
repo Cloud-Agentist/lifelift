@@ -251,11 +251,18 @@ export async function listCapabilities(): Promise<Capability[]> {
 
 const ACTOR_RUNTIME = process.env.ACTOR_RUNTIME_URL ?? "http://localhost:3004";
 
+export interface VisualPanel {
+  panelType: "calendar" | "wishlist" | "approval" | "search-results" | "financial" | "memory" | "none";
+  title?: string;
+  data?: Record<string, unknown>;
+}
+
 export interface InteractionResult {
   text: string;
   eventId: string;
   workflowId?: string;
   proposedIntents?: unknown[];
+  visual?: VisualPanel;
 }
 
 /**
@@ -288,7 +295,12 @@ export async function interact(
   }
 
   const data = (await res.json()) as {
-    result?: { text?: string; eventId?: string };
+    result?: {
+      text?: string;
+      eventId?: string;
+      proposedIntents?: unknown[];
+      visual?: VisualPanel;
+    };
     workflowId?: string;
   };
 
@@ -296,6 +308,8 @@ export async function interact(
     text: data.result?.text ?? "",
     eventId: data.result?.eventId ?? "",
     workflowId: data.workflowId,
+    proposedIntents: data.result?.proposedIntents,
+    visual: data.result?.visual,
   };
 }
 
@@ -343,6 +357,7 @@ export interface ReasoningResult {
   text: string;
   sessionId?: string;
   proposedIntents?: unknown[];
+  visual?: VisualPanel;
   providerMetadata?: Record<string, unknown>;
 }
 
@@ -454,5 +469,6 @@ export async function reasonDirect(
     text: data.text,
     eventId,
     proposedIntents: data.proposedIntents,
+    visual: data.visual,
   };
 }

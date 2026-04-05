@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect, useTransition } from "react";
 import Markdown from "react-markdown";
 import { sendMessage, decideIntent } from "./actions";
-import type { ProposedIntent, SendMessageResult } from "./actions";
+import type { ProposedIntent, SendMessageResult, VisualPanel } from "./actions";
 import { getActionMeta, getSuggestedActions } from "@/lib/actions";
 
 // ── Types ────────────────────────────────────────────────────────────────────
@@ -12,6 +12,7 @@ interface Message {
   role: "user" | "assistant";
   content: string;
   proposedIntents?: ProposedIntent[];
+  visual?: VisualPanel;
   timestamp: string;
 }
 
@@ -216,6 +217,7 @@ export default function ChatShell({ actorId, userName, initialHistory = [], init
   const [input, setInput] = useState(initialPrompt ?? "");
   const [sessionId, setSessionId] = useState<string | undefined>(undefined);
   const [showSuggestions, setShowSuggestions] = useState(true);
+  const [activePanel, setActivePanel] = useState<VisualPanel | null>(null);
   const [isPending, startTransition] = useTransition();
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -240,9 +242,14 @@ export default function ChatShell({ actorId, userName, initialHistory = [], init
         role: "assistant",
         content: result.text,
         proposedIntents: result.proposedIntents,
+        visual: result.visual,
         timestamp: new Date().toISOString(),
       };
       setMessages((prev) => [...prev, assistantMsg]);
+      // Update active panel if the response includes a visual hint
+      if (result.visual && result.visual.panelType !== "none") {
+        setActivePanel(result.visual);
+      }
     });
   }
 
@@ -260,73 +267,160 @@ export default function ChatShell({ actorId, userName, initialHistory = [], init
   }
 
   return (
-    <div className="flex flex-col h-full">
-      {/* Messages */}
-      <div className="flex-1 overflow-y-auto px-4 py-6 space-y-4">
-        {messages.map((msg, i) => (
-          <div key={i} className={`flex gap-2 ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
-            {msg.role === "assistant" && (
-              <img src="/brand/avatar-dark-64.png" alt="" className="h-8 w-8 rounded-full shrink-0 mt-1" />
-            )}
-            <div
-              className={`max-w-xl rounded-2xl px-4 py-3 text-sm ${
-                msg.role === "user"
-                  ? "bg-indigo-600 text-white"
-                  : "bg-slate-800 text-slate-100 border border-slate-700"
-              }`}
-            >
-              {msg.role === "assistant" ? (
-                <div className="prose prose-invert prose-sm max-w-none prose-p:my-1 prose-ul:my-1 prose-ol:my-1 prose-li:my-0.5 prose-headings:my-2 prose-strong:text-slate-100">
-                  <Markdown>{msg.content}</Markdown>
-                </div>
-              ) : (
-                <p className="whitespace-pre-wrap">{msg.content}</p>
+    <div className="flex flex-row h-full">
+      {/* Left: Chat */}
+      <div className={`flex flex-col ${activePanel ? "w-1/2 border-r border-slate-800" : "w-full"} h-full transition-all duration-300`}>
+        {/* Messages */}
+        <div className="flex-1 overflow-y-auto px-4 py-6 space-y-4">
+          {messages.map((msg, i) => (
+            <div key={i} className={`flex gap-2 ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
+              {msg.role === "assistant" && (
+                <img src="/brand/avatar-dark-64.png" alt="" className="h-8 w-8 rounded-full shrink-0 mt-1" />
               )}
+              <div
+                className={`max-w-xl rounded-2xl px-4 py-3 text-sm ${
+                  msg.role === "user"
+                    ? "bg-indigo-600 text-white"
+                    : "bg-slate-800 text-slate-100 border border-slate-700"
+                }`}
+              >
+                {msg.role === "assistant" ? (
+                  <div className="prose prose-invert prose-sm max-w-none prose-p:my-1 prose-ul:my-1 prose-ol:my-1 prose-li:my-0.5 prose-headings:my-2 prose-strong:text-slate-100">
+                    <Markdown>{msg.content}</Markdown>
+                  </div>
+                ) : (
+                  <p className="whitespace-pre-wrap">{msg.content}</p>
+                )}
 
-              {/* Inline intent cards */}
-              {msg.proposedIntents && msg.proposedIntents.length > 0 && (
-                <div className="mt-2 pt-2 border-t border-slate-700 space-y-2">
-                  {msg.proposedIntents.map((intent, j) => (
-                    <IntentCard
-                      key={intent.intentId ?? j}
-                      intent={intent}
-                      onDecide={handleDecideIntent}
-                      disabled={isPending}
-                    />
-                  ))}
-                </div>
-              )}
+                {/* Inline intent cards */}
+                {msg.proposedIntents && msg.proposedIntents.length > 0 && (
+                  <div className="mt-2 pt-2 border-t border-slate-700 space-y-2">
+                    {msg.proposedIntents.map((intent, j) => (
+                      <IntentCard
+                        key={intent.intentId ?? j}
+                        intent={intent}
+                        onDecide={handleDecideIntent}
+                        disabled={isPending}
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
+          ))}
+
+          {isPending && <TypingIndicator />}
+          <div ref={bottomRef} />
+        </div>
+
+        {/* Suggestion chips (visible only before first user message) */}
+        {showSuggestions && !isPending && <SuggestionChips onSelect={doSend} />}
+
+        {/* Input */}
+        <div className="border-t border-slate-800 px-4 py-3 flex gap-3 items-end">
+          <textarea
+            ref={inputRef}
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder="Ask me anything..."
+            rows={1}
+            className="flex-1 resize-none rounded-xl bg-slate-800 border border-slate-700 text-slate-100 placeholder-slate-500 px-4 py-3 text-sm focus:outline-none focus:border-indigo-500 transition-colors"
+            disabled={isPending}
+          />
+          <button
+            onClick={() => doSend(input)}
+            disabled={isPending || !input.trim()}
+            className="h-11 px-5 rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:opacity-40 text-white font-medium text-sm transition-colors"
+          >
+            Send
+          </button>
+        </div>
+      </div>
+
+      {/* Right: Content panel */}
+      {activePanel && (
+        <div className="w-1/2 h-full flex flex-col bg-slate-950">
+          {/* Panel header */}
+          <div className="flex items-center justify-between px-4 py-3 border-b border-slate-800">
+            <div className="flex items-center gap-2">
+              <span className="text-lg">{getPanelIcon(activePanel.panelType)}</span>
+              <h2 className="text-sm font-semibold text-slate-100">
+                {activePanel.title ?? getPanelTitle(activePanel.panelType)}
+              </h2>
+            </div>
+            <button
+              onClick={() => setActivePanel(null)}
+              className="text-slate-500 hover:text-slate-300 text-sm transition-colors"
+            >
+              Close
+            </button>
           </div>
-        ))}
 
-        {isPending && <TypingIndicator />}
-        <div ref={bottomRef} />
+          {/* Panel content */}
+          <div className="flex-1 overflow-y-auto p-4">
+            <ContentPanel panel={activePanel} actorId={actorId} />
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── Content panel rendering ─────────────────────────────────────────────────
+
+function getPanelIcon(panelType: string): string {
+  switch (panelType) {
+    case "calendar": return "\u{1F4C5}";
+    case "wishlist": return "\u{1F381}";
+    case "approval": return "\u{2705}";
+    case "search-results": return "\u{1F50D}";
+    case "financial": return "\u{1F4B0}";
+    case "memory": return "\u{1F9E0}";
+    default: return "\u{1F4CB}";
+  }
+}
+
+function getPanelTitle(panelType: string): string {
+  switch (panelType) {
+    case "calendar": return "Calendar";
+    case "wishlist": return "Wishlist";
+    case "approval": return "Approvals";
+    case "search-results": return "Search Results";
+    case "financial": return "Finances";
+    case "memory": return "Memories";
+    default: return "Content";
+  }
+}
+
+function ContentPanel({ panel, actorId }: { panel: VisualPanel; actorId: string }) {
+  // TODO: Replace placeholder content with embedded capability UIs
+  // For now, show the panel data if available, or a contextual placeholder
+  return (
+    <div className="space-y-4">
+      <div className="rounded-xl bg-slate-900 border border-slate-800 p-6">
+        <p className="text-slate-400 text-sm mb-3">
+          {panel.panelType === "wishlist" && "Your wishlists and items will appear here as you create and manage them."}
+          {panel.panelType === "calendar" && "Your upcoming events and schedule will appear here."}
+          {panel.panelType === "approval" && "Actions pending your approval will appear here."}
+          {panel.panelType === "financial" && "Your financial activity and budgets will appear here."}
+          {panel.panelType === "memory" && "Agent memories and learned context will appear here."}
+          {!["wishlist", "calendar", "approval", "financial", "memory"].includes(panel.panelType) && "Content will appear here."}
+        </p>
+
+        {panel.data && Object.keys(panel.data).length > 0 && (
+          <div className="mt-4 p-3 bg-slate-800 rounded-lg">
+            <p className="text-xs text-slate-500 mb-2 font-mono">Panel data</p>
+            <pre className="text-xs text-slate-300 overflow-x-auto whitespace-pre-wrap">
+              {JSON.stringify(panel.data, null, 2)}
+            </pre>
+          </div>
+        )}
       </div>
 
-      {/* Suggestion chips (visible only before first user message) */}
-      {showSuggestions && !isPending && <SuggestionChips onSelect={doSend} />}
-
-      {/* Input */}
-      <div className="border-t border-slate-800 px-4 py-3 flex gap-3 items-end">
-        <textarea
-          ref={inputRef}
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={handleKeyDown}
-          placeholder="Ask me anything..."
-          rows={1}
-          className="flex-1 resize-none rounded-xl bg-slate-800 border border-slate-700 text-slate-100 placeholder-slate-500 px-4 py-3 text-sm focus:outline-none focus:border-indigo-500 transition-colors"
-          disabled={isPending}
-        />
-        <button
-          onClick={() => doSend(input)}
-          disabled={isPending || !input.trim()}
-          className="h-11 px-5 rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:opacity-40 text-white font-medium text-sm transition-colors"
-        >
-          Send
-        </button>
-      </div>
+      <p className="text-xs text-slate-600 text-center">
+        Embedded {panel.panelType} UI coming soon
+      </p>
     </div>
   );
 }

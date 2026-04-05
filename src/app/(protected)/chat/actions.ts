@@ -32,12 +32,19 @@ export interface ProposedIntent {
   approvalId?: string;
 }
 
+export interface VisualPanel {
+  panelType: "calendar" | "wishlist" | "approval" | "search-results" | "financial" | "memory" | "none";
+  title?: string;
+  data?: Record<string, unknown>;
+}
+
 export interface SendMessageResult {
   text: string;
   sessionId?: string;
   eventId?: string;
   workflowId?: string;
   proposedIntents?: ProposedIntent[];
+  visual?: VisualPanel;
 }
 
 /**
@@ -55,6 +62,7 @@ export async function sendMessage(args: SendMessageArgs): Promise<SendMessageRes
       eventId: result.eventId,
       workflowId: result.workflowId,
       proposedIntents: result.proposedIntents as ProposedIntent[] | undefined,
+      visual: result.visual as VisualPanel | undefined,
     };
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error";
